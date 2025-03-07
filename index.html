@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickCopy</title>
+    <style>
+        /* Reset default margins, paddings and set box-sizing to border-box */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f7f7;
+            color: #444;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            flex-direction: column;
+        }
+
+        /* Container for the entire content */
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* Header styling */
+        header {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        /* Description styling */
+        .description {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        /* Textarea for input */
+        textarea {
+            width: 100%;
+            max-width: 800px;
+            height: 120px;
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: #fafafa;
+            resize: vertical;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        /* Focus effect on textarea */
+        textarea:focus {
+            border-color: #3498db;
+        }
+
+        /* Buttons styling */
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hover effect for buttons */
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Styling for copy button */
+        button.clicked {
+            background-color: red;
+        }
+
+        /* Styling for each line and copy button */
+        .lineDiv {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            justify-content: space-between;
+        }
+
+        .lineText {
+            font-size: 1.1rem;
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+
+        /* Always visible 'Clear Saved Data' button */
+        #clearButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff5722;
+            border-radius: 50%;
+            padding: 15px 20px;
+            color: white;
+            font-size: 1.2em;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #clearButton:hover {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        QuickCopy
+    </header>
+
+    <div class="description">
+        QuickCopy is an intuitive online tool designed to help you quickly copy any text. Simply input your content, and QuickCopy will display it with a convenient copy button next to each line. Whether you're working with code, notes, or any text, copying individual lines has never been easier. Save time and effort with QuickCopy, your go-to tool for fast and hassle-free copying.
+    </div>
+
+    <div>
+        <textarea id="inputText" placeholder="Enter text here..."></textarea>
+    </div>
+
+    <div>
+        <button onclick="processText()">Process Text</button>
+    </div>
+
+    <div id="textContainer"></div>
+</div>
+
+<!-- Always visible 'Clear Saved Data' button -->
+<button id="clearButton" onclick="clearLocalStorage()">Clear Saved Data</button>
+
+<script>
+    // Process the input text
+    function processText() {
+        const inputText = document.getElementById('inputText').value.trim();
+        const lines = inputText.split('\n').map(line => line.trim()); // Trim each line
+        const textContainer = document.getElementById('textContainer');
+        textContainer.innerHTML = ''; // Clear previous content
+
+        const copiedLines = JSON.parse(localStorage.getItem('copiedLines')) || [];
+
+        lines.forEach((line, index) => {
+            if (line.length === 0) return; // Skip empty lines after trimming
+
+            const lineDiv = document.createElement('div');
+            lineDiv.classList.add('lineDiv');
+            
+            const p = document.createElement('p');
+            p.textContent = line;
+            p.classList.add('lineText');
+
+            // If this line was previously copied, it will show some indicator
+            if (copiedLines.includes(index)) {
+                p.style.color = "red"; // Directly applying color change for now
+            }
+
+            const copyButton = document.createElement('button');
+            copyButton.textContent = 'Copy';
+            copyButton.onclick = () => copyText(line, p, copyButton, index); // Pass the button along with the line
+
+            lineDiv.appendChild(p);
+            lineDiv.appendChild(copyButton);
+            textContainer.appendChild(lineDiv);
+        });
+
+        // Save input text to local storage
+        localStorage.setItem('inputText', inputText);
+    }
+
+    // Copy the text, change color of the line and the button to red
+    function copyText(text, pElement, buttonElement, index) {
+        navigator.clipboard.writeText(text).then(() => {
+            // Change the color of the copied line and button to red
+            pElement.style.color = "red";
+            buttonElement.style.backgroundColor = "red"; // Set button background to red
+
+            // Get the current copied lines from localStorage
+            const copiedLines = JSON.parse(localStorage.getItem('copiedLines')) || [];
+
+            // Add the current line's index to the copied lines
+            if (!copiedLines.includes(index)) {
+                copiedLines.push(index);
+            }
+
+            // Save the updated copied lines to localStorage
+            localStorage.setItem('copiedLines', JSON.stringify(copiedLines));
+        }).catch(err => {
+            console.error('Error copying text: ', err);
+        });
+    }
+
+    // Clear the local storage data
+    function clearLocalStorage() {
+        localStorage.removeItem('inputText');
+        localStorage.removeItem('copiedLines');
+        document.getElementById('inputText').value = '';
+        document.getElementById('textContainer').innerHTML = '';
+    }
+
+    // Load saved data from local storage on page load
+    window.onload = () => {
+        const savedText = localStorage.getItem('inputText');
+        if (savedText) {
+            document.getElementById('inputText').value = savedText;
+            processText();
+        }
+    };
+</script>
+
+</body>
+</html>
