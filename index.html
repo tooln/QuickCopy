@@ -3,239 +3,441 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickCopy</title>
+    <title>QuickCopy Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/3/34/Icon_hacker.png">
     <style>
-        /* Reset default margins, paddings and set box-sizing to border-box */
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --danger-color: #f72585;
+            --success-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --duplicate-color: #fff3cd;
+            --border-color: #dee2e6;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Body styling */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f7f7f7;
-            color: #444;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
             min-height: 100vh;
-            text-align: center;
-            padding: 20px;
+            display: flex;
             flex-direction: column;
+            line-height: 1.6;
         }
 
-        /* Container for the entire content */
-        .container {
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             width: 100%;
-            max-width: 1000px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
 
-        /* Header styling */
-        header {
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-title {
             font-size: 2rem;
-            color: #2c3e50;
-            margin-bottom: 15px;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
         }
 
-        /* Description styling */
-        .description {
-            font-size: 1rem;
-            color: #7f8c8d;
-            margin-bottom: 25px;
+        .app-title .logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 1rem;
+            background-color: var(--primary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
         }
 
-        /* Textarea for input */
+        .app-description {
+            color: var(--gray-color);
+            margin-bottom: 2rem;
+            max-width: 800px;
+        }
+
+        .input-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
         textarea {
             width: 100%;
-            max-width: 800px;
-            height: 120px;
-            padding: 12px;
+            min-height: 150px;
+            padding: 1rem;
             font-size: 1rem;
             border-radius: 8px;
-            border: 1px solid #ddd;
-            background-color: #fafafa;
+            border: 1px solid var(--border-color);
+            background-color: white;
             resize: vertical;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
             outline: none;
         }
 
-        /* Focus effect on textarea */
-        textarea:focus {
-            border-color: #3498db;
-        }
-
-        /* Buttons styling */
-        button {
-            background-color: #3498db;
+        .btn {
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 12px 25px;
-            font-size: 1.1rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
             border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Hover effect for buttons */
-        button:hover {
-            background-color: #2980b9;
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
         }
 
-        /* Styling for copy button */
-        button.clicked {
-            background-color: red;
+        .btn:active {
+            transform: translateY(0);
         }
 
-        /* Styling for each line and copy button */
-        .lineDiv {
+        .btn-clear {
+            background-color: var(--danger-color);
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(247, 37, 133, 0.3);
+        }
+
+        .btn-clear:hover {
+            background-color: #d91a6d;
+        }
+
+        .stats-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats-item {
             display: flex;
             align-items: center;
-            margin: 10px 0;
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            justify-content: space-between;
         }
 
-        .lineText {
-            font-size: 1.1rem;
+        .stats-label {
+            font-weight: 500;
+            margin-right: 0.5rem;
+            color: var(--gray-color);
+        }
+
+        .stats-value {
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .lines-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .line-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .line-item:last-child {
+            border-bottom: none;
+        }
+
+        .line-number {
+            min-width: 40px;
+            font-weight: 500;
+            color: var(--gray-color);
+            margin-right: 1.5rem;
+        }
+
+        .line-content {
             flex-grow: 1;
-            padding-right: 10px;
+            text-align: center;
+            padding: 0 1rem;
+            word-break: break-word;
         }
 
-        /* Always visible 'Clear Saved Data' button */
-        #clearButton {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #ff5722;
-            border-radius: 50%;
-            padding: 15px 20px;
-            color: white;
-            font-size: 1.2em;
-            border: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            z-index: 1000;
+        .line-copied {
+            color: var(--danger-color);
         }
 
-        #clearButton:hover {
-            background-color: #cc0000;
+        .line-duplicate {
+            background-color: var(--duplicate-color);
+            border-left: 4px solid #ffc107;
+        }
+
+        .btn-copy {
+            background-color: var(--accent-color);
+            min-width: 80px;
+        }
+
+        .btn-copied {
+            background-color: var(--danger-color);
+        }
+
+        .app-footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            text-align: center;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+
+        .brand {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 1rem;
+            }
+            
+            .app-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .line-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .line-content {
+                text-align: left;
+                width: 100%;
+                padding: 0;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="app-title">
+                <div class="logo">QP</div>
+                QuickCopy Pro
+            </div>
+            <button class="btn" onclick="processText()">Process Text</button>
+        </header>
 
-<div class="container">
-    <header>
-        QuickCopy
-    </header>
+        <p class="app-description">
+            Quickly copy individual lines from your text. Processed lines will appear below with copy buttons.
+            Duplicate lines are highlighted for easy identification.
+        </p>
 
-    <div class="description">
-        QuickCopy is an intuitive online tool designed to help you quickly copy any text. Simply input your content, and QuickCopy will display it with a convenient copy button next to each line. Whether you're working with code, notes, or any text, copying individual lines has never been easier. Save time and effort with QuickCopy, your go-to tool for fast and hassle-free copying.
+        <div class="input-container">
+            <textarea id="inputText" placeholder="Paste your text here..."></textarea>
+            <button class="btn" onclick="processText()">Process Text</button>
+        </div>
+
+        <div id="statsContainer" class="stats-container">
+            <div class="stats-item">
+                <span class="stats-label">Total Lines:</span>
+                <span id="totalLines" class="stats-value">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Copied:</span>
+                <span id="copiedLines" class="stats-value">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Duplicates:</span>
+                <span id="duplicateLines" class="stats-value">0</span>
+            </div>
+        </div>
+
+        <div id="linesContainer" class="lines-container"></div>
+
+        <footer class="app-footer">
+            <p>Powered by <span class="brand">Professor Software Solutions</span></p>
+        </footer>
     </div>
 
-    <div>
-        <textarea id="inputText" placeholder="Enter text here..."></textarea>
-    </div>
+    <button id="clearButton" class="btn btn-clear" onclick="clearLocalStorage()" title="Clear All Data">🗑️</button>
 
-    <div>
-        <button onclick="processText()">Process Text</button>
-    </div>
+    <script>
+        // Unique namespace for this application
+        const STORAGE_PREFIX = 'QuickCopyPro_';
+        
+        // Process the input text
+        function processText() {
+            const inputText = document.getElementById('inputText').value.trim();
+            const lines = inputText.split('\n')
+                                  .map(line => line.trim())
+                                  .filter(line => line.length > 0);
+            const linesContainer = document.getElementById('linesContainer');
+            linesContainer.innerHTML = '';
 
-    <div id="textContainer"></div>
-</div>
-
-<!-- Always visible 'Clear Saved Data' button -->
-<button id="clearButton" onclick="clearLocalStorage()">🗑️</button>
-
-<script>
-    // Process the input text
-    function processText() {
-        const inputText = document.getElementById('inputText').value.trim();
-        const lines = inputText.split('\n').map(line => line.trim()); // Trim each line
-        const textContainer = document.getElementById('textContainer');
-        textContainer.innerHTML = ''; // Clear previous content
-
-        const copiedLines = JSON.parse(localStorage.getItem('copiedLines')) || [];
-
-        lines.forEach((line, index) => {
-            if (line.length === 0) return; // Skip empty lines after trimming
-
-            const lineDiv = document.createElement('div');
-            lineDiv.classList.add('lineDiv');
+            // Count duplicates and occurrences
+            const lineCounts = {};
+            const lineOccurrences = {};
+            let currentIndex = 0;
             
-            const p = document.createElement('p');
-            p.textContent = line;
-            p.classList.add('lineText');
+            lines.forEach(line => {
+                lineCounts[line] = (lineCounts[line] || 0) + 1;
+                lineOccurrences[currentIndex] = lineCounts[line];
+                currentIndex++;
+            });
 
-            // If this line was previously copied, it will show some indicator
-            if (copiedLines.includes(index)) {
-                p.style.color = "red"; // Directly applying color change for now
-            }
+            const duplicateLines = Object.keys(lineCounts).filter(line => lineCounts[line] > 1);
+            const duplicateCount = duplicateLines.length;
+            const copiedLines = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'copiedLines')) || [];
+            const copiedCount = copiedLines.length;
 
-            const copyButton = document.createElement('button');
-            copyButton.textContent = 'Copy';
-            copyButton.onclick = () => copyText(line, p, copyButton, index); // Pass the button along with the line
+            // Update statistics
+            document.getElementById('totalLines').textContent = lines.length;
+            document.getElementById('copiedLines').textContent = copiedCount;
+            document.getElementById('duplicateLines').textContent = duplicateCount;
 
-            lineDiv.appendChild(p);
-            lineDiv.appendChild(copyButton);
-            textContainer.appendChild(lineDiv);
-        });
+            // Process each line
+            lines.forEach((line, index) => {
+                const lineItem = document.createElement('div');
+                lineItem.className = 'line-item';
+                
+                // Add duplicate class if line appears more than once
+                if (lineOccurrences[index] > 1) {
+                    lineItem.classList.add('line-duplicate');
+                }
 
-        // Save input text to local storage
-        localStorage.setItem('inputText', inputText);
-    }
+                // Create line number element
+                const lineNumber = document.createElement('div');
+                lineNumber.className = 'line-number';
+                lineNumber.textContent = index + 1;
+                
+                // Create line content element
+                const lineContent = document.createElement('div');
+                lineContent.className = 'line-content';
+                lineContent.textContent = line;
+                
+                if (copiedLines.includes(index)) {
+                    lineContent.classList.add('line-copied');
+                }
 
-    // Copy the text, change color of the line and the button to red
-    function copyText(text, pElement, buttonElement, index) {
-        navigator.clipboard.writeText(text).then(() => {
-            // Change the color of the copied line and button to red
-            pElement.style.color = "red";
-            buttonElement.style.backgroundColor = "red"; // Set button background to red
+                // Create copy button
+                const copyButton = document.createElement('button');
+                copyButton.className = copiedLines.includes(index) ? 'btn btn-copy btn-copied' : 'btn btn-copy';
+                copyButton.textContent = copiedLines.includes(index) ? 'Copied' : 'Copy';
+                copyButton.onclick = () => copyText(line, lineContent, copyButton, index);
 
-            // Get the current copied lines from localStorage
-            const copiedLines = JSON.parse(localStorage.getItem('copiedLines')) || [];
+                // Append elements
+                lineItem.appendChild(lineNumber);
+                lineItem.appendChild(lineContent);
+                lineItem.appendChild(copyButton);
+                linesContainer.appendChild(lineItem);
+            });
 
-            // Add the current line's index to the copied lines
-            if (!copiedLines.includes(index)) {
-                copiedLines.push(index);
-            }
-
-            // Save the updated copied lines to localStorage
-            localStorage.setItem('copiedLines', JSON.stringify(copiedLines));
-        }).catch(err => {
-            console.error('Error copying text: ', err);
-        });
-    }
-
-    // Clear the local storage data
-    function clearLocalStorage() {
-        localStorage.removeItem('inputText');
-        localStorage.removeItem('copiedLines');
-        document.getElementById('inputText').value = '';
-        document.getElementById('textContainer').innerHTML = '';
-    }
-
-    // Load saved data from local storage on page load
-    window.onload = () => {
-        const savedText = localStorage.getItem('inputText');
-        if (savedText) {
-            document.getElementById('inputText').value = savedText;
-            processText();
+            // Save input text to local storage
+            localStorage.setItem(STORAGE_PREFIX + 'inputText', inputText);
         }
-    };
-</script>
 
+        // Copy the text
+        function copyText(text, contentElement, buttonElement, index) {
+            navigator.clipboard.writeText(text).then(() => {
+                contentElement.classList.add('line-copied');
+                buttonElement.textContent = 'Copied';
+                buttonElement.classList.add('btn-copied');
+
+                const copiedLines = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'copiedLines')) || [];
+
+                if (!copiedLines.includes(index)) {
+                    copiedLines.push(index);
+                    localStorage.setItem(STORAGE_PREFIX + 'copiedLines', JSON.stringify(copiedLines));
+                    
+                    // Update copied count
+                    document.getElementById('copiedLines').textContent = copiedLines.length;
+                }
+            }).catch(err => {
+                console.error('Error copying text: ', err);
+            });
+        }
+
+        // Clear only this app's local storage data
+        function clearLocalStorage() {
+            if (confirm('Are you sure you want to clear all QuickCopy data?')) {
+                // Only clear keys with our prefix
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith(STORAGE_PREFIX)) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                document.getElementById('inputText').value = '';
+                document.getElementById('linesContainer').innerHTML = '';
+                document.getElementById('totalLines').textContent = '0';
+                document.getElementById('copiedLines').textContent = '0';
+                document.getElementById('duplicateLines').textContent = '0';
+                
+                // Show confirmation
+                alert('All QuickCopy data has been cleared successfully!');
+            }
+        }
+
+        // Load saved data from local storage on page load
+        window.onload = () => {
+            const savedText = localStorage.getItem(STORAGE_PREFIX + 'inputText');
+            if (savedText) {
+                document.getElementById('inputText').value = savedText;
+                processText();
+            }
+        };
+    </script>
 </body>
 </html>
